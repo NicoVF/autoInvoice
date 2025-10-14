@@ -41,8 +41,6 @@ def ask_gpt_to_parse(text):
     prompt = textwrap.dedent(f"""
     Analizá el siguiente texto obtenido por OCR y determiná si corresponde a un **comprobante bancario argentino real** 
     (por ejemplo, un comprobante de transferencia, depósito, pago o acreditación).
-    Si NO parece un comprobante (por ejemplo, si es una tabla, planilla, captura de Excel, mensaje, texto genérico o sin datos financieros reales),
-    devolvé todos los campos con **null** y el campo "bank" con "null".
 
     Devolvé solo JSON con las claves exactas: {FIELDS}
 
