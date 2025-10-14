@@ -1,7 +1,7 @@
 import json
 import re
 import textwrap
-from app.logger import loggerCloudVision, loggerOpenAI
+from app.logger import loggerCloudVision, loggerOpenAI, loggerApp
 from app.services.cloud_vision import extract_text_from_file
 from app.services.openAI import interpret_with_gpt
 
@@ -106,10 +106,10 @@ def parse_invoice(file_url, file_type="image"):
             return None
         if parsed.get("amount"):
             parsed["amount"] = normalize_amount(parsed["amount"])
-        loggerOpenAI.info(f"Extracted: {parsed}")
+        loggerApp.info(f"Extracted: {parsed}")
         return parsed
     except Exception as e:
-        loggerCloudVision.error(f"Error parsing invoice {file_url}: {e}")
+        loggerApp.error(f"Error parsing invoice {file_url}: {e}")
         return None
 
 
