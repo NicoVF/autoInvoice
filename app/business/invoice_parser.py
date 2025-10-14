@@ -23,6 +23,7 @@ BANKS = [
     "Banco Patagonia",
     "Banco Supervielle",
     "Banco Credicoop",
+    "Cuenta DNI",
     "Brubank",
     "Ualá",
     "Mercado Pago",
