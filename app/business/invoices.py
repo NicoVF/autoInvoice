@@ -30,7 +30,7 @@ def append_invoice_row(data, group_name):
     return append_row_to_sheet(SPREADSHEET_ID, SPREADSHEET_SHEET_GENERAL, row)
 
 
-def handle_invoice(chat_id, message_id, file_url, file_type, chat_name):
+def handle_invoice(chat_id, message_id, file_url, file_type, chat_name, from_me=False):
     try:
         parsed = parse_invoice(file_url, file_type=file_type)
         if not parsed:
@@ -39,6 +39,13 @@ def handle_invoice(chat_id, message_id, file_url, file_type, chat_name):
 
         amount = parsed.get("amount") or 0
         if amount <= 0:
+            return
+
+        sender_cvu = parsed.get("sender_cvu")
+        if from_me and (expected_cbu := get_group_expected_cbu(chat_name)) and sender_cvu and sender_cvu == expected_cbu:
+            parsed["amount"] = -abs(amount)
+            parsed["notes"] = "💸 Comprobante enviado (egreso)"
+            append_invoice_row(parsed, chat_name)
             return
 
         receiver_cvu = parsed.get("receiver_cvu")

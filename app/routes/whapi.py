@@ -15,8 +15,6 @@ def whapi_events():
         messages = data.get("messages", [])
         for msg in messages:
             try:
-                if msg["from_me"]:
-                    continue
                 chat_id = msg.get("chat_id", "")
                 chat_name = msg.get("chat_name", "")
                 msg_type = msg.get("type", "")
@@ -27,10 +25,10 @@ def whapi_events():
                     continue
 
                 if msg_type == "document" and msg.get("document", {}).get("mime_type") == "application/pdf":
-                    handle_invoice(chat_id, message_id, msg["document"]["link"], "pdf", chat_name)
+                    handle_invoice(chat_id, message_id, msg["document"]["link"], "pdf", chat_name, from_me=msg.get("from_me", False))
 
                 elif msg_type == "image":
-                    handle_invoice(chat_id, message_id, msg["image"]["link"], "image", chat_name)
+                    handle_invoice(chat_id, message_id, msg["image"]["link"], "image", chat_name, from_me=msg.get("from_me", False))
 
             except Exception as e:
                 loggerWhappi.error(f"Error processing message: {e}", exc_info=True)
