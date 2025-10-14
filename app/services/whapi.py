@@ -11,13 +11,13 @@ def setup_whapi_webhook():
     try:
         base_url = WHAPI_URL
         token = WHAPI_TOKEN
-        bot_url = WEBHOOK_URL
+        bot_url = WEBHOOK_URL + "whapi/events"
 
         if not token or not bot_url:
             loggerWhappi.warning("WHAPI_TOKEN or BOT_URL not defined. Webhook was not configured.")
             return False
 
-        endpoint = f"{base_url}/whapi/events"
+        endpoint = f"{base_url}/settings"
         headers = {
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json"

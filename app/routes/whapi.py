@@ -7,7 +7,7 @@ from app.business.invoices import handle_invoice
 whapi_bp = Blueprint('whapi', __name__)
 
 
-@whapi_bp.route("/whapi/events", methods=["POST"])
+@whapi_bp.route("/whapi/events/messages", methods=["POST"])
 def whapi_events():
     try:
         data = request.get_json(force=True, silent=True) or {}
