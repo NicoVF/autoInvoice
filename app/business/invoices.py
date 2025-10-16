@@ -1,6 +1,7 @@
 import os
 from app.services.spreadsheet import append_row_to_sheet
-from app.business.groups import get_group_commission, get_group_expected_cbu
+from app.business.groups import get_group_commission, get_group_expected_cbu, get_group_expected_name, \
+    get_group_expected_alias
 from app.services.whapi import send_text_message
 from app.business.invoice_parser import parse_invoice, build_summary, format_arg_amount
 from app.logger import loggerApp
@@ -21,6 +22,7 @@ def append_invoice_row(data, group_name):
         data.get("sender_cvu") or "",
         data.get("receiver_name") or "",
         data.get("receiver_cvu") or "",
+        data.get("alias") or "",
         data.get("receiver_cuit") or "",
         data.get("operation_id") or "",
         data.get("bank") or "",
@@ -32,7 +34,7 @@ def append_invoice_row(data, group_name):
 
 def handle_invoice(chat_id, message_id, file_url, file_type, chat_name, from_me=False):
     try:
-        parsed = parse_invoice(file_url, file_type=file_type)
+        parsed = parse_invoice(chat_name, file_url, file_type)
         if not parsed:
             send_text_message(chat_id, "❌ Error al leer el comprobante.", reply_to=message_id)
             return
@@ -49,18 +51,21 @@ def handle_invoice(chat_id, message_id, file_url, file_type, chat_name, from_me=
             return
 
         receiver_cvu = parsed.get("receiver_cvu")
+        receiver_alias = parsed.get("receiver_alias")
+        receiver_name = parsed.get("receiver_name")
         summary = build_summary(parsed)
-        if (expected_cbu := get_group_expected_cbu(chat_name)) and receiver_cvu and receiver_cvu != expected_cbu:
+        if ((expected_cbu := get_group_expected_cbu(chat_name)) and receiver_cvu and receiver_cvu != expected_cbu) or \
+                ((expected_alias := get_group_expected_alias(chat_name)) and receiver_alias and receiver_alias != expected_alias or
+                (expected_name := get_group_expected_name(chat_name)) and receiver_name and receiver_name != expected_name):
             parsed["notes"] = "❌ Comprobante rebotado ❌"
             send_text_message(chat_id, f"❌ Comprobante rebotado ❌\n\n{summary}", reply_to=message_id)
             append_invoice_row(parsed, chat_name)
             return
+        text_amount_with_commission = ""
         if commission := get_group_commission(chat_name):
             final_amount = amount - (amount * commission / 100)
             text_amount_with_commission = (
                 f"\n\n💰 *Monto a liquidar:* *${format_arg_amount(final_amount)}*")
-        else:
-            text_amount_with_commission = ""
         send_text_message(chat_id, f"{summary}{text_amount_with_commission}", reply_to=message_id)
         append_invoice_row(parsed, chat_name)
     except Exception as e:
