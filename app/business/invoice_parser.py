@@ -12,28 +12,30 @@ FIELDS = [
     "receiver_name", "receiver_cuit", "receiver_cvu", "operation_id"
 ]
 BANKS = [
-    "Banco Nación",
-    "Banco Provincia",
-    "Banco Santander Río",
-    "Banco Galicia",
     "Banco BBVA",
-    "Banco Macro",
+    "Banco Credicoop",
+    "Banco Galicia",
     "Banco HSBC",
     "Banco ICBC",
+    "Banco Macro",
+    "Banco Nación",
+    "BNA",
     "Banco Patagonia",
+    "Banco Provincia",
+    "Banco Santander Río",
     "Banco Supervielle",
-    "Banco Credicoop",
-    "Cuenta DNI",
     "Brubank",
-    "Ualá",
-    "Mercado Pago",
-    "Personal Pay",
-    "Naranja X",
-    "Lemon Cash",
-    "Prex",
     "Copter",
+    "Cuenta DNI",
+    "Lemon Cash",
+    "Mercado Pago",
+    "Naranja X",
+    "Personal Pay",
     "Pomelo",
-    "Telepagos"
+    "Prex",
+    "Ripio",
+    "Telepagos",
+    "Ualá"
 ]
 
 
