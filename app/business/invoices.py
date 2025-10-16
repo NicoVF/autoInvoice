@@ -1,7 +1,7 @@
 import os
 from app.services.spreadsheet import append_row_to_sheet
 from app.business.groups import get_group_commission, get_group_expected_cbu, get_group_expected_name, \
-    get_group_expected_alias
+    get_group_expected_alias, get_group_expected_cuit
 from app.services.whapi import send_text_message
 from app.business.invoice_parser import parse_invoice, build_summary, format_arg_amount
 from app.logger import loggerApp
@@ -53,10 +53,26 @@ def handle_invoice(chat_id, message_id, file_url, file_type, chat_name, from_me=
         receiver_cvu = parsed.get("receiver_cvu")
         receiver_alias = parsed.get("receiver_alias")
         receiver_name = parsed.get("receiver_name")
+        receiver_cuit = parsed.get("receiver_cuit")
+        expected_cbu = get_group_expected_cbu(chat_name)
+        expected_alias = get_group_expected_alias(chat_name)
+        expected_name = get_group_expected_name(chat_name)
+        expected_cuit = get_group_expected_cuit(chat_name)
+        loggerApp.info(expected_alias)
+        loggerApp.info(receiver_alias)
         summary = build_summary(parsed)
-        if ((expected_cbu := get_group_expected_cbu(chat_name)) and receiver_cvu and receiver_cvu != expected_cbu) or \
-                ((expected_alias := get_group_expected_alias(chat_name)) and receiver_alias and receiver_alias != expected_alias or
-                (expected_name := get_group_expected_name(chat_name)) and receiver_name and receiver_name != expected_name):
+        match_reasons = []
+        if expected_cbu and receiver_cvu and receiver_cvu == expected_cbu:
+            match_reasons.append("CBU")
+        if expected_alias and receiver_alias and receiver_alias == expected_alias:
+            match_reasons.append("Alias")
+        if expected_cuit and receiver_cuit and receiver_cuit == expected_cuit:
+            match_reasons.append("Cuit")
+        if expected_name and receiver_name and receiver_name == expected_name:
+            match_reasons.append("Nombre")
+        if match_reasons:
+            parsed["notes"] = f"✅ Comprobante aprobado por {', '.join(match_reasons)}"
+        else:
             parsed["notes"] = "❌ Comprobante rebotado ❌"
             send_text_message(chat_id, f"❌ Comprobante rebotado ❌\n\n{summary}", reply_to=message_id)
             append_invoice_row(parsed, chat_name)

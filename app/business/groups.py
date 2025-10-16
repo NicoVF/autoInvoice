@@ -1,4 +1,5 @@
 import os
+import re
 import threading
 from app.logger import loggerApp
 from app.services.spreadsheet import fetch_rows_from_sheet, sheet_exists
