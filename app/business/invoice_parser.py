@@ -8,7 +8,7 @@ from app.services.openAI import interpret_with_gpt
 
 FIELDS = [
     "bank", "amount", "date", "time",
-    "sender_name", "sender_cuit", "sender_cvu", "alias",
+    "sender_name", "sender_cuit", "sender_cvu", "receiver_alias",
     "receiver_name", "receiver_cuit", "receiver_cvu", "operation_id"
 ]
 BANKS = [
@@ -115,10 +115,9 @@ def parse_invoice(chat_name, file_url, file_type="image"):
         for field in ["receiver_cuit", "sender_cuit"]:
             if parsed.get(field):
                 parsed[field] = re.sub(r"[-\s]", "", str(parsed[field]))
-        if parsed.get("receiver_name"):
-            parsed["receiver_name"] = str(parsed["receiver_name"]).lower().strip()
-        if parsed.get("alias"):
-            parsed["alias"] = str(parsed["alias"]).lower().strip()
+        for field in ["receiver_name", "receiver_alias"]:
+            if parsed.get(field):
+                parsed[field] = str(parsed[field]).lower().strip()
         if parsed.get("amount"):
             parsed["amount"] = normalize_amount(parsed["amount"])
         loggerApp.info(f"Extracted: {parsed}")
