@@ -102,12 +102,19 @@ def get_group_expected_cbu(chat_name):
 def get_group_expected_alias(chat_name):
     for g in ALLOWED_GROUPS_CACHE["groups"]:
         if g["name"] == chat_name:
-            return g["expected_alias"]
+            return g["expected_alias"].lower().strip()
     return None
 
 
 def get_group_expected_name(chat_name):
     for g in ALLOWED_GROUPS_CACHE["groups"]:
         if g["name"] == chat_name:
-            return g["expected_name"]
+            return g["expected_name"].lower().strip()
+    return None
+
+
+def get_group_expected_cuit(chat_name):
+    for g in ALLOWED_GROUPS_CACHE["groups"]:
+        if g["name"] == chat_name:
+            return re.sub(r"[-\s]", "", g["expected_cuit"])
     return None
