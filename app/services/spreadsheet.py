@@ -58,3 +58,31 @@ def append_row_to_sheet(spreadsheet_id, sheet_name, values, value_input_option="
     except Exception as e:
         loggerGSpreadsheet.error(f"Failed to append row to '{sheet_name}': {e}")
         return False
+
+
+def get_spreadsheet_metadata(spreadsheet_id):
+    try:
+        spreadsheet = gspread_client.open_by_key(spreadsheet_id)
+        metadata = {
+            "sheets": [
+                {"properties": {"title": ws.title, "id": ws.id}}
+                for ws in spreadsheet.worksheets()
+            ]
+        }
+        return metadata
+    except Exception as e:
+        loggerGSpreadsheet.error(f"Error getting spreadsheet metadata: {e}")
+        return {"sheets": []}
+
+
+def sheet_exists(spreadsheet_id: str, sheet_name: str) -> bool:
+    try:
+        metadata = get_spreadsheet_metadata(spreadsheet_id)
+        sheet_names = [s["properties"]["title"] for s in metadata.get("sheets", [])]
+        exists = sheet_name in sheet_names
+        if not exists:
+            loggerGSpreadsheet.warning(f"Sheet not found: '{sheet_name}'")
+        return exists
+    except Exception as e:
+        loggerGSpreadsheet.error(f"Error checking sheet existence: {e}")
+        return False
