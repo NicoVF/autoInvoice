@@ -8,7 +8,7 @@ from app.services.openAI import interpret_with_gpt
 
 FIELDS = [
     "bank", "amount", "date", "time",
-    "sender_name", "sender_cuit", "sender_cvu",
+    "sender_name", "sender_cuit", "sender_cvu", "alias",
     "receiver_name", "receiver_cuit", "receiver_cvu", "operation_id"
 ]
 BANKS = [
@@ -95,7 +95,13 @@ def normalize_amount(raw_value):
         return None
 
 
-def parse_invoice(file_url, file_type="image"):
+def clean_value(v):
+    if v in [None, "None", "", "null", "Null", "NULL"]:
+        return None
+    return v
+
+
+def parse_invoice(chat_name, file_url, file_type="image"):
     try:
         text = extract_text_from_file(file_url, file_type=file_type)
         if not text:
@@ -105,6 +111,14 @@ def parse_invoice(file_url, file_type="image"):
         if not parsed:
             loggerOpenAI.error(f"ChatGPT parsing failed for {file_url}")
             return None
+        parsed = {k: clean_value(v) for k, v in parsed.items()}
+        for field in ["receiver_cuit", "sender_cuit"]:
+            if parsed.get(field):
+                parsed[field] = re.sub(r"[-\s]", "", str(parsed[field]))
+        if parsed.get("receiver_name"):
+            parsed["receiver_name"] = str(parsed["receiver_name"]).lower().strip()
+        if parsed.get("alias"):
+            parsed["alias"] = str(parsed["alias"]).lower().strip()
         if parsed.get("amount"):
             parsed["amount"] = normalize_amount(parsed["amount"])
         loggerApp.info(f"Extracted: {parsed}")
