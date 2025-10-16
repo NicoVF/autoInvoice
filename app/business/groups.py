@@ -14,6 +14,7 @@ SPREADSHEET_GROUPS_ACTIVE_COLUMN = int(os.environ["SPREADSHEET_GROUPS_ACTIVE_COL
 SPREADSHEET_GROUPS_COMMISSION = int(os.environ["SPREADSHEET_GROUPS_COMMISSION"])
 SPREADSHEET_GROUPS_EXPECTED_CBU = int(os.environ["SPREADSHEET_GROUPS_EXPECTED_CBU"])
 SPREADSHEET_GROUPS_EXPECTED_ALIAS = int(os.environ["SPREADSHEET_GROUPS_EXPECTED_ALIAS"])
+SPREADSHEET_GROUPS_EXPECTED_CUIT = int(os.environ["SPREADSHEET_GROUPS_EXPECTED_CUIT"])
 SPREADSHEET_GROUPS_EXPECTED_NAME = int(os.environ["SPREADSHEET_GROUPS_EXPECTED_NAME"])
 SPREADSHEET_COLUMN_GROUPS_TODAY_AVAILABLE_BALANCE = int(os.environ["SPREADSHEET_COLUMN_GROUPS_TODAY_AVAILABLE_BALANCE"])
 SPREADSHEET_ROW_GROUPS_TODAY_AVAILABLE_BALANCE = int(os.environ["SPREADSHEET_ROW_GROUPS_TODAY_AVAILABLE_BALANCE"])
@@ -27,10 +28,11 @@ def update_allowed_groups():
                 SPREADSHEET_GROUPS_COMMISSION,
                 SPREADSHEET_GROUPS_EXPECTED_CBU,
                 SPREADSHEET_GROUPS_EXPECTED_ALIAS,
-                SPREADSHEET_GROUPS_EXPECTED_NAME
+                SPREADSHEET_GROUPS_EXPECTED_CUIT,
+                SPREADSHEET_GROUPS_EXPECTED_NAME,
             ], has_headers=True)
         groups = []
-        for name, is_active, commission, expected_cbu, expected_alias, expected_name in rows:
+        for name, is_active, commission, expected_cbu, expected_alias, expected_cuit, expected_name in rows:
             name = name.strip()
             if not name or is_active.upper() != "TRUE":
                 continue
@@ -45,6 +47,7 @@ def update_allowed_groups():
                 "commission": commission_value,
                 "expected_cbu": expected_cbu,
                 "expected_alias": expected_alias,
+                "expected_cuit": expected_cuit,
                 "expected_name": expected_name
             })
         with CACHE_LOCK:
