@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 from app.routes.spreadsheet import spreadsheet_bp
+from app.routes.whatsapp import whatsapp_bp
 from app.routes.whapi import whapi_bp
 from app.business.groups import update_allowed_groups
 from app.logger import loggerApp
@@ -23,6 +24,7 @@ def create_app():
     CORS(app)
     app.register_blueprint(whapi_bp)
     app.register_blueprint(spreadsheet_bp)
+    app.register_blueprint(whatsapp_bp)
     threading.Thread(target=_init_groups, daemon=True).start()
     threading.Thread(target=setup_whapi_webhook, daemon=True).start()
     return app
