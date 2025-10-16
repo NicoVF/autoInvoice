@@ -18,6 +18,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 
+ENV GRPC_VERBOSITY=NONE
+ENV GRPC_TRACE=""
+ENV ABSL_LOGGING_STDERR_THRESHOLD=fatal
+
+
 EXPOSE 8080
 
 
