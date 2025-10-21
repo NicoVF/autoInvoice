@@ -47,7 +47,7 @@ def handle_invoice(chat_id, message_id, file_url, file_type, chat_name, from_me=
             parsed["amount"] = -abs(amount)
             parsed["notes"] = "💸 Comprobante enviado (egreso)"
             append_invoice_row(parsed, chat_name)
-            send_text_message(chat_id, f"Transferencia enviada 📤\nMonto: ${amount} ✅", reply_to=message_id)
+            send_text_message(chat_id, f"Transferencia enviada 📤\nMonto: ${format_arg_amount(amount)} ✅", reply_to=message_id)
             return
 
         receiver_cvu = parsed.get("receiver_cvu")
@@ -58,8 +58,6 @@ def handle_invoice(chat_id, message_id, file_url, file_type, chat_name, from_me=
         expected_alias = get_group_expected_alias(chat_name)
         expected_name = get_group_expected_name(chat_name)
         expected_cuit = get_group_expected_cuit(chat_name)
-        loggerApp.info(expected_alias)
-        loggerApp.info(receiver_alias)
         summary = build_summary(parsed)
         match_reasons = []
         if expected_cbu and receiver_cvu and receiver_cvu == expected_cbu:
