@@ -47,6 +47,7 @@ def handle_invoice(chat_id, message_id, file_url, file_type, chat_name, from_me=
             parsed["amount"] = -abs(amount)
             parsed["notes"] = "💸 Comprobante enviado (egreso)"
             append_invoice_row(parsed, chat_name)
+            send_text_message(chat_id, f"Transferencia enviada 📤\nMonto: ${amount} ✅", reply_to=message_id)
             return
 
         receiver_cvu = parsed.get("receiver_cvu")
