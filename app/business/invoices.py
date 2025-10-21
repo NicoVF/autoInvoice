@@ -43,8 +43,7 @@ def handle_invoice(chat_id, message_id, file_url, file_type, chat_name, from_me=
         if amount <= 0:
             return
 
-        sender_cvu = parsed.get("sender_cvu")
-        if from_me and (expected_cbu := get_group_expected_cbu(chat_name)) and sender_cvu and sender_cvu == expected_cbu:
+        if from_me and amount:
             parsed["amount"] = -abs(amount)
             parsed["notes"] = "💸 Comprobante enviado (egreso)"
             append_invoice_row(parsed, chat_name)
