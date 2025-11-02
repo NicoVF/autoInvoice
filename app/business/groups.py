@@ -57,8 +57,8 @@ def update_allowed_groups():
         loggerApp.info(f"Groups updated: {len(groups)} - {groups}")
         return groups
     except Exception as e:
-        loggerApp.exception(f"❌ Error updating groups: {e}")
-        return []
+        loggerApp.exception(f"❌ Error updating groups, keeping previous cache: {e}")
+        return ALLOWED_GROUPS_CACHE.get("groups", [])
 
 
 def get_group_balance(group_name):
