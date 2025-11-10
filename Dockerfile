@@ -9,7 +9,8 @@ WORKDIR /app
 
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    poppler-utils tzdata \
+    ca-certificates openssl curl poppler-utils tzdata \
+ && update-ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
 
